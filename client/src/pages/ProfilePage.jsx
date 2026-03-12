@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
+import {useNavigate} from 'react-router-dom'
 
 const ProfilePage = () => {
 
 const[selectedImg,setSelectedImg] = useState(null);
-const navigate = useNavigate();
+const navigate = useNavigate()
 const [name,setName] = useState("Martin ohnson")
 const [bio,setBio] = useState("Hi Everyone,Iam Using QuickChat")
 

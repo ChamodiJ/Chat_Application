@@ -10,13 +10,13 @@ const [password, setPassword] = useState("")
 const [bio, setBio] = useState("")
 const [isDataSubmitted, setIsDataSubmitted] = useState(false);
 
-const onSubmithandler = (event)=>{
+const onSubmitHandler = (event)=>{
   event.preventDefault();
 
   if(currState === "Sign Up" && !isDataSubmitted){
     setIsDataSubmitted(true)
     return;
-    
+
   }
 }
 
