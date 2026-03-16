@@ -3,10 +3,13 @@ import { Route, Routes } from 'react-router-dom' // imports routing components
 import HomePage from './pages/HomePage' // imports Home page
 import LoginPage from './pages/LoginPage' // imports Login page
 import ProfilePage from './pages/ProfilePage' // imports Profile page
+import {Toaster}  from 'react-hot-toast';
 
 const App = () => { // creates App component
   return (
     <div className="bg-[url('./src/assets/bgImage.svg')] bg-contain"> {/* main div with background image */}
+      <Toaster></Toaster>
+      
       <Routes> {/* wrapper for all routes */}
         <Route path='/' element={<HomePage />} /> {/* shows HomePage for / */}
         <Route path='/login' element={<LoginPage />} /> {/* shows LoginPage for /login */}
