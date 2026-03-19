@@ -1,13 +1,42 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useContext, useState } from 'react'
 // Import assets (images/icons) and dummy messages
 import assets, { messagesDummyData } from '../assets/assets'
 // Import a helper function to format message timestamps
 import { formatMessageTime } from '../lib/utils'
+import { ChatContext } from '../../context/ChatContext'
 
-const ChatContainer = ({ selectedUser, setSelectedUser }) => {
-  // useRef creates a reference to a DOM element
+const ChatContainer = ( ) => {
+  const {messages,selectedUser,setSelectedUser,sendMessages,getMessages} = useContext(ChatContext)
+    const {authUser,onlineUsers } = useContext(AuthContext);
+
   // We'll attach this to the bottom div of the chat to auto-scroll
   const scrollEnd = useRef()
+
+  const [input, setInput] = useState('');
+
+  const handleSendMessage = async (e) => {
+e.preventDefault();
+if(input.trim() === "" ) return null;
+await sendMessages({text : input.trim()});
+setInput("")
+  }
+
+  const handleSendImage = async(e) => {
+    const file = e.target.files[0];
+    if(!file || !file.type.startsWith("image/")){
+      toast.error("select an image file")
+      return;
+    }
+    const reader = new FileReader();
+
+  reader.onloaded = async()=> {
+    await sendMessages({image: reader.result})
+e.target.value = " " 
+  }
+  reader.readAsDataURL(file)
+  }
+
+  
 
   // useEffect runs when the component mounts
   // This scrolls to the bottom of the chat automatically
@@ -26,11 +55,11 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
       {/* ----- Header ----- */}
       <div className='flex items-center gap-3 py-3 px-4 border-b border-stone-500'>
         {/* User profile image */}
-        <img src={assets.profile_martin} alt="" className="w-8 rounded-full" />
+        <img src={selectedUser.profilePic || assets.avatar_icon} alt="" className="w-8 rounded-full" />
 
         {/* User name and online indicator */}
         <p className='flex-1 text-lg text-white flex items-center gap-2'>
-          Martin Johnson
+          {selectedUser.fullName}
           <span className="w-2 h-2 rounded-full bg-green-500"></span> {/* green dot */}
         </p>
 
@@ -107,14 +136,17 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
         {/* Text input and image upload container */}
         <div className='flex-1 flex items-center bg-gray-100/12 px-3 rounded-full'>
           <input
+          onChange={(e) => setInput(e.target.value)}
             type="text"
+            value={input}
+            onKeyDown={(e)=> e.key === "Enter"  ? handleSendMessage(e) : null }
             placeholder='send a message'
             className='flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400'
           />
           {/* Hidden file input for image upload */}
-          <input type="file" id='image' accept='image/png,image/jpeg' hidden />
+          <input onChange={handleSendImage} type="file" id='image' accept='image/png,image/jpeg' hidden />
           <label htmlFor='image'>
-            <img src={assets.gallery_icon} alt='' className='w-5 mr-2 cursor-pointer'/>
+            <img  onClick={handleSendMessage} src={assets.gallery_icon} alt='' className='w-5 mr-2 cursor-pointer'/>
           </label>
         </div>
 
