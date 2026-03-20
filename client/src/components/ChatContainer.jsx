@@ -36,16 +36,24 @@ e.target.value = " "
   reader.readAsDataURL(file)
   }
 
+
+
+  useEffect(() =>{
+    if(selectedUser){
+      getMessages(selectedUser._id)
+    }
+  },[selectedUser])
+
   
 
   // useEffect runs when the component mounts
   // This scrolls to the bottom of the chat automatically
   useEffect(() => {
-    if (scrollEnd.current) {
+    if (scrollEnd.current && messages) {
       // scrollIntoView scrolls smoothly to the referenced element
       scrollEnd.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, []) // empty array → run only once when component mounts
+  }, [messages]) // empty array → run only once when component mounts
 
   // If a user is selected, show the chat; otherwise show placeholder
   return selectedUser ? (
@@ -60,7 +68,8 @@ e.target.value = " "
         {/* User name and online indicator */}
         <p className='flex-1 text-lg text-white flex items-center gap-2'>
           {selectedUser.fullName}
-          <span className="w-2 h-2 rounded-full bg-green-500"></span> {/* green dot */}
+          {onlineUsers.includes(selectedUser._id)
+         && <span className="w-2 h-2 rounded-full bg-green-500"></span>} {/* green dot */}
         </p>
 
         {/* Mobile only: arrow to close chat */}
@@ -82,12 +91,12 @@ e.target.value = " "
       {/* ----- Chat Body ----- */}
       <div className='flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6'>
         {/* Loop through messagesDummyData to display each message */}
-        {messagesDummyData.map((msg, index) => (
+        {messages.map((msg, index) => (
           <div
             key={index}
             className={`flex items-end gap-2 justify-end ${
               // Reverse alignment for messages from the other user
-              msg.senderId !== '680f50e4f10f3cd28382ecf9' && 'flex-row-reverse'
+              msg.senderId !== authUser._id && 'flex-row-reverse'
             }`}
           >
             {msg.image ? (
@@ -102,7 +111,7 @@ e.target.value = " "
               <p
                 className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
                   // Adjust border rounding depending on sender
-                  msg.senderId !== '680f50e4f10f3cd28382ecf9'
+                  msg.senderId !== authUser._id
                     ? 'rounded-bl-none'
                     : 'rounded-br-none'
                 }`}
@@ -115,9 +124,11 @@ e.target.value = " "
             <div className='text-center text-xs'>
               <img
                 src={
-                  msg.senderId === '680f50e4f10f3cd28382ecf9'
-                    ? assets.avatar_icon // current user
-                    : assets.profile_martin // other user
+                  msg.senderId === authUser._id ? authUser?.
+                   profilePic || 
+                    assets.avatar_icon
+                    : selectedUser ?.profilePic || // current user
+                     assets.avatar_icon // other user
                 }
                 alt=""
                 className='w-7 rounded-full'
