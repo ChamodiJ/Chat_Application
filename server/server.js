@@ -7,7 +7,6 @@ import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 import { Server } from 'socket.io';
 
-
 // create express app and HTTP server
 const app = express();
 const server = http.createServer(app);
@@ -18,7 +17,7 @@ export const io = new Server(server, {
 });
 
 // store online users
-export const userSocketMap = {}; // {userId : socketId}
+export const userSocketMap = {};
 
 // socket.io connection handler
 io.on("connection", (socket) => {
@@ -27,33 +26,35 @@ io.on("connection", (socket) => {
 
     if (userId) userSocketMap[userId] = socket.id;
 
-    // emit online user to all connected clients
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-    socket.on("discconected", ()=>{
+    socket.on("disconnect", () => { // ✅ FIXED
         console.log("User Disconnected", userId);
         delete userSocketMap[userId];
-        io.emit("getOnlineUsers", Object.keys(userSocketMap))
-    })
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
 });
 
 // middleware
 app.use(express.json({ limit: "4mb" }));
 app.use(cors());
 
-// Routes setup
+// Routes
 app.use("/api/status", (req, res) => res.send("Server is live"));
 app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
 
-// connect to mongodb
+// connect DB
 await connectDB();
 
-if(process.env.NODE_ENV !== "production"){
-// start the server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log("Server is running on port :" + PORT));
+// start server
+if (process.env.NODE_ENV !== "production") {
+    const PORT = 5000;
+
+    server.listen(PORT, () => { // ✅ FIXED
+        console.log(`Server running on port ${PORT}`);
+    });
 }
 
-//Export server  for  vercel
+// export
 export default server;

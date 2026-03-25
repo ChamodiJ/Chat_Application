@@ -4,6 +4,8 @@ import assets, { messagesDummyData } from '../assets/assets'
 // Import a helper function to format message timestamps
 import { formatMessageTime } from '../lib/utils'
 import { ChatContext } from '../../context/ChatContext'
+import { AuthContext } from '../../context/AuthContext'
+
 
 const ChatContainer = ( ) => {
   const {messages,selectedUser,setSelectedUser,sendMessages,getMessages} = useContext(ChatContext)

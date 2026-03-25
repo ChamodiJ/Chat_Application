@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import assets,{ imagesDummyData } from '../assets/assets'
 import { ChatContext } from '../../context/ChatContext'
 
+
 const RightSidebar = () => {
 
   const { selectedUser,messages} = useContext(ChatContext)

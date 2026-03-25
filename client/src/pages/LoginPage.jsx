@@ -22,7 +22,7 @@ const onSubmitHandler = (event)=>{
     return;
 
   }
-  login(currState === "Sign up"  ? 'signup' : 'login',{email,fullName,password,bio})
+  login(currState === "Sign Up"  ? 'signup' : 'login',{email,fullName,password,bio})
 }
 
   return (
