@@ -49,6 +49,7 @@ await connectDB();
 
 // start server
 if (process.env.NODE_ENV !== "production") {
+ 
     const PORT = 5000;
 
     server.listen(PORT, () => { // ✅ FIXED
